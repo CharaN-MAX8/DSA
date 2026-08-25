@@ -14,7 +14,7 @@ public:
         
     public: 
         Node* root;
-
+        
         Trie(){
             root = new Node();
         }
@@ -72,9 +72,9 @@ public:
             if(temp->children.size() != 1 || temp->endOfWord){
                 break;
             }
-            temp = temp->children[ch];
+
             ans += ch;
-            
+            temp = temp->children[ch];
         }
         return ans;
     }
