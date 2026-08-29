@@ -1,39 +1,38 @@
 class Solution {
 public:
-    bool dirCycleHelper(int src, vector<int> &vis, vector<int> &recPath, vector<vector<int>>& graph){
+    bool isCycle(int src, vector<bool> &vis, vector<bool> &recPath, vector<vector<int>> &graph){
         vis[src] = true;
         recPath[src] = true;
 
-       for(int i=0; i<graph.size(); i++){
-        int u = graph[i][1];
-        int v = graph[i][0];
-        if(u == src){
+        for(int v : graph[src]){
             if(!vis[v]){
-                if(dirCycleHelper(v, vis, recPath, graph)){
-                    return true;
-                }
+                if(isCycle(v, vis, recPath, graph)) return true;
             } else {
-                if(recPath[v]){
-                    return true;
-                }
-            }
-        }
-       }
-        recPath[src] = false;
-        return false;
-    }
-    bool canFinish(int numCourses, vector<vector<int>>& graph) {
-        int V = numCourses;
-        vector<int> vis(V, false);
-        vector<int> recPath(V, false);
-        for(int i=0; i<V; i++){
-            if(!vis[i]){
-                if(dirCycleHelper(i, vis, recPath, graph)){
-                    return false;
-                } 
+                if(recPath[v]) return true;
             }
         }
 
-return true;
+        recPath[src] = false;
+        return false;
+    }
+
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+        int V = numCourses;
+        vector<vector<int>> graph(V);
+
+        for(int i=0; i<prerequisites.size(); i++){
+            graph[prerequisites[i][1]].push_back(prerequisites[i][0]);
+        }
+
+        vector<bool> vis(V, false);
+        vector<bool> recPath(V, false);
+
+        for(int i=0; i<V; i++){
+            if(!vis[i]){
+                if(isCycle(i, vis, recPath, graph)) return false;
+            }
+        }
+
+        return true;
     }
 };
