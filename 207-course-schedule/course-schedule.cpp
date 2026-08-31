@@ -1,34 +1,50 @@
 class Solution {
 public:
-    bool isCycle(int src, vector<bool> &vis, vector<bool> &recPath, vector<vector<int>>& graph){
-        vis[src] = true;
-        recPath[src] = true;
+    void calIndegree(vector<int> &inDeg, vector<vector<int>> &graph){
+        for(int u=0; u<inDeg.size(); u++){
+            for(int v : graph[u]) inDeg[v]++;
+        }
+    }
 
-        for(int i=0; i<graph.size(); i++){
-            int u = graph[i][1];
-            int v = graph[i][0];
-            if(u == src){
-                if(!vis[v]){
-                    if(isCycle(v, vis, recPath, graph)) return true;
-                } else {
-                    if(recPath[v]) return true;
-                }
+    bool topoSort(int V, vector<vector<int>> &graph){
+        vector<int> inDeg(V, 0);
+        calIndegree(inDeg, graph);
+        queue<int> q;
+
+        for(int i=0; i<V; i++){
+            if(inDeg[i] == 0){
+                q.push(i);
             }
         }
-        recPath[src] = false;
+
+        while(!q.empty()){
+            int curr = q.front();
+            q.pop();
+
+            for(int v : graph[curr]){
+                inDeg[v]--;
+                if(inDeg[v] == 0) q.push(v);
+            }
+        }
+
+        for(int i=0; i<V; i++){
+            if(inDeg[i] != 0){
+                return true;
+            }
+        }
+
         return false;
     }
 
-    bool canFinish(int numCourses, vector<vector<int>>& graph) {
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
         int V = numCourses;
-        vector<bool> vis(V, false);
-        vector<bool> recPath(V, false);
+        vector<vector<int>> graph(V);
 
-        for(int i=0; i<V; i++){
-            if(!vis[i]){
-                if(isCycle(i, vis, recPath, graph)) return false;
-            }
+        for(int i=0; i<prerequisites.size(); i++){
+            graph[prerequisites[i][1]].push_back(prerequisites[i][0]);
         }
-        return true;
+
+        return (!topoSort(V, graph));
+        
     }
 };
