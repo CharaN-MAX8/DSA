@@ -1,20 +1,16 @@
 class Solution {
 public:
     bool isPalindrome(int x) {
-        vector<int> arr;
-        if(x == 0) return true;
         if(x < 0) return false;
+
+        long reverse = 0;
+        int xcopy = x;
+
         while(x > 0){
-            int t = x % 10;
-            arr.push_back(t);
-            x = x / 10;
+            reverse = (reverse*10) + (x%10);
+            x /= 10;
         }
 
-        for(int i=0; i<arr.size(); i++){
-            int j = arr.size()-i-1;
-            if(arr[i] != arr[j]) return false;
-        }
-
-        return true;
+        return xcopy == reverse;
     }
 };
